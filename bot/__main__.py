@@ -21,7 +21,8 @@ if config.CATCH_UP:
 
 def stop_bot(signal, frame):
     logger.debug(signal)
-    logger.info("Stopping bot...")
+    asyncio.ensure_future(bot.disconnect())
+    logger.info("Disconnected, stopping...")
     sys.exit()
 
 
