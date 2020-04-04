@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 logger.info("Loading config...")
 OWNER_ID = config.OWNER_ID
-ADMINS = config.ADMINS
+ADMINS = config.ADMINS + (OWNER_ID,)
 WHITELIST = config.WHITELIST + (OWNER_ID,) + ADMINS
 TOKEN = config.TOKEN
 NAME = TOKEN.split(":")[0]
