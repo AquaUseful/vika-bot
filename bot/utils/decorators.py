@@ -1,6 +1,6 @@
 import functools
 import telethon
-from bot import bot, config, BOT_USERNAME, DEF_LANG
+from bot import bot, config, BOT_USERNAME
 
 
 def smart_command(command, has_args=False, no_pm=False, no_public=False):
@@ -21,6 +21,16 @@ def only_private(func):
             await func(event)
         else:
             await event.reply("This command available only in private chats!")
+    return wrapper
+
+
+def only_public(func):
+    @functools.wraps(func)
+    async def wrapper(event):
+        if event.is_group:
+            await func(event)
+        else:
+            await event.reply("This command is only for public chats!")
     return wrapper
 
 
