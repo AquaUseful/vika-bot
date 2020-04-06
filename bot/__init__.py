@@ -2,7 +2,9 @@ import asyncio
 import logging
 import telethon
 import pymongo
+import os
 from bot import config
+from bot.utils import db
 
 logging.basicConfig(format="[%(asctime)s] (%(name)s) %(levelname)s: %(message)s",
                     level=logging.DEBUG)
@@ -16,8 +18,16 @@ WHITELIST = config.WHITELIST + (OWNER_ID,) + ADMINS
 TOKEN = config.TOKEN
 NAME = TOKEN.split(":")[0]
 
-mongo_cli = pymongo.MongoClient(config.MONGO_CONN, config.MONGO_PORT)
+if "IS_HEROKU" in os.environ:
+    mongo_cli = pymongo.MongoClient(os.environ["MONGODB_URI"])
+else:
+    mongo_cli = pymongo.MongoClient(config.MONGO_CONN, config.MONGO_PORT)
 mongodb = mongo_cli.vika_bot
+if config.INIT_DB:
+    logger.info("Initialising db indexes")
+    mongodb.users.create_index([("tg_id", pymongo.ASCENDING)], unique=True)
+    mongodb.chats.create_index([("tg_id", pymongo.ASCENDING)], unique=True)
+    mongodb.notes.create_index([("chat_id", pymongo.ASCENDING)])
 
 bot = telethon.TelegramClient(NAME, config.API_ID, config.API_HASH,
                               proxy=config.PROXY)
