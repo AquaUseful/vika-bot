@@ -34,5 +34,19 @@ def only_public(func):
     return wrapper
 
 
-def client_is_admin(client: telethon.TelegramClient):
-    pass
+def raw_event():
+    def decorator(func):
+        bot.add_event_handler(func, telethon.events.Raw())
+    return decorator
+
+
+def must_be_reply(err_msg="This message must be a reply!"):
+    def decorator(func):
+        @functools.wraps(func)
+        async def wrapper(event):
+            if event.message.reply_to_msg_id is not None:
+                await func(event)
+            else:
+                await event.reply(err_msg)
+        return wrapper
+    return decorator
