@@ -4,7 +4,6 @@ import telethon
 import pymongo
 import os
 from bot import config
-from bot.utils import db
 
 logging.basicConfig(format="[%(asctime)s] (%(name)s) %(levelname)s: %(message)s",
                     level=logging.DEBUG)
