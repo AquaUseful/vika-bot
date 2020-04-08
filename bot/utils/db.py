@@ -40,11 +40,11 @@ async def add_chat_to_db(chat: telethon.types.Chat):
     logger.debug(res)
 
 
-async def add_note_to_db(chat_id: int, title: str, note: str):
+async def add_note_to_db(chat_id: int, title: str, text: str):
     new_note = {
         "chat_id": chat_id,
         "title": title,
-        "note": note
+        "text": text
     }
     old_note = mongodb.notes.find_one({"chat_id": chat_id, "title": title})
     if old_note:
@@ -52,6 +52,18 @@ async def add_note_to_db(chat_id: int, title: str, note: str):
     else:
         res = mongodb.notes.insert_one(new_note)
     logger.debug(res)
+
+
+async def get_note_text(chat_id: int, title: str):
+    note = mongodb.notes.find_one({"chat_id": chat_id, "title": title},
+                                  ["text"])
+    if note:
+        return note["text"]
+
+
+async def delete_note(chat_id: int, title: str):
+    res = mongodb.notes.delete_one({"chat_id": chat_id, "title": title})
+    return res.deleted_count > 0
 
 
 async def get_chat(chat_id: int, projection=None):

@@ -16,3 +16,26 @@ async def add_note(event):
     await db.add_note_to_db(event.chat.id, title, reply_to_msg.text)
     await event.reply(f"Note {title} added!\n"
                       "Use /shownote to check text")
+
+
+@decorators.smart_command("shownote", has_args=True)
+@decorators.only_public
+async def shown_note(event):
+    title = (await utils.get_command_args(event.message.raw_text))[0]
+    note = await db.get_note_text(event.chat.id, title)
+    logger.debug("Got %s text: %s", title, note)
+    if note:
+        await event.reply(note)
+    else:
+        await event.reply(f"Note {title} not found!")
+
+
+@decorators.smart_command("delnote", has_args=True)
+@decorators.only_public
+async def del_note(event):
+    title = (await utils.get_command_args(event.message.raw_text))[0]
+    res = await db.delete_note(event.chat.id, title)
+    if res:
+        await event.reply(f"Note {title} deleted")
+    else:
+        await event.reply(f"Note {title} not found!")
