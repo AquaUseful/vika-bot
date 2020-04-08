@@ -22,3 +22,7 @@ async def get_members(chat_id: int, only_ids=False):
 
 async def is_user_admin(chat_id: int, user_id: int):
     return user_id in db.get_chat(chat_id, ["admins"])
+
+
+async def get_command_args(commnad_message: str):
+    return commnad_message.split()[1:]
