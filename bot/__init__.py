@@ -26,7 +26,8 @@ if config.INIT_DB:
     logger.info("Initialising db indexes")
     mongodb.users.create_index([("tg_id", pymongo.ASCENDING)], unique=True)
     mongodb.chats.create_index([("tg_id", pymongo.ASCENDING)], unique=True)
-    mongodb.notes.create_index([("chat_id", pymongo.ASCENDING)])
+    mongodb.notes.create_index([("chat_id", pymongo.ASCENDING),
+                                ("title", pymongo.ASCENDING)], unique=True)
 
 bot = telethon.TelegramClient(NAME, config.API_ID, config.API_HASH,
                               proxy=config.PROXY)
