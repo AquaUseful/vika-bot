@@ -14,4 +14,3 @@ async def migrate_chat(event):
         res = mongodb.chats.update_one(
             {"tg_id": old_id}, {"$set": {"tg_id": new_id}})
         logger.debug(res)
-
