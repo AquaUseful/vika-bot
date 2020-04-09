@@ -15,10 +15,10 @@ async def add_user_to_db(user: telethon.types.User):
     }
     old_user = mongodb.users.find_one({"tg_id": user.id})
     if old_user:
-        res = mongodb.users.replace_one({"_id": old_user["_id"]}, new_user)
+        mongodb.users.replace_one({"_id": old_user["_id"]}, new_user)
     else:
-        res = mongodb.users.insert_one(new_user)
-    logger.debug(res)
+        mongodb.users.insert_one(new_user)
+    logger.debug("User %s added", user.id)
 
 
 async def add_chat_to_db(chat: telethon.types.Chat):
@@ -29,15 +29,14 @@ async def add_chat_to_db(chat: telethon.types.Chat):
         "title": chat.title,
         "members": members,
         "admins": admins,
-        "warnlimit": 5,
-        "disabled": []
+        "welcome": None
     }
     old_chat = mongodb.chats.find_one({"tg_id": chat.id})
     if old_chat:
-        res = mongodb.chats.replace_one({"_id": old_chat["_id"]}, new_chat)
+        mongodb.chats.replace_one({"_id": old_chat["_id"]}, new_chat)
     else:
-        res = mongodb.chats.insert_one(new_chat)
-    logger.debug(res)
+        mongodb.chats.insert_one(new_chat)
+    logger.debug("Chat %s added", chat.id)
 
 
 async def add_note_to_db(chat_id: int, title: str, text: str):
@@ -48,17 +47,21 @@ async def add_note_to_db(chat_id: int, title: str, text: str):
     }
     old_note = mongodb.notes.find_one({"chat_id": chat_id, "title": title})
     if old_note:
-        res = mongodb.notes.replace_one({"id:": old_note["_id"]}, new_note)
+        mongodb.notes.replace_one({"id:": old_note["_id"]}, new_note)
     else:
-        res = mongodb.notes.insert_one(new_note)
-    logger.debug(res)
+        mongodb.notes.insert_one(new_note)
+    logger.debug("Note %s added to chat %s", title, chat_id)
 
 
-async def get_note_text(chat_id: int, title: str):
-    note = mongodb.notes.find_one({"chat_id": chat_id, "title": title},
-                                  ["text"])
-    if note:
-        return note["text"]
+async def get_note_by_id(doc_id, projection=None):
+    note = mongodb.notes.find_one({"_id": doc_id}, projection)
+    return note
+
+
+async def get_note(chat_id: int, title: str, projection=None):
+    note = mongodb.notes.find_one(
+        {"chat_id": chat_id, "title": title}, projection)
+    return note
 
 
 async def delete_note(chat_id: int, title: str):
@@ -66,6 +69,17 @@ async def delete_note(chat_id: int, title: str):
     return res.deleted_count > 0
 
 
-async def get_chat(chat_id: int, projection=None):
-    chat = mongodb.chats.find_one({"chat_id": chat_id}, projection)
+async def get_chat(tg_id: int, projection=None):
+    chat = mongodb.chats.find_one({"tg_id": tg_id}, projection)
     return chat
+
+
+async def update_chat(tg_id: int, query):
+    mongodb.chats.update_one({"tg_id": tg_id}, query)
+
+
+async def change_chat_id(old_id: int, new_id: int):
+    mongodb.chats.update_one({"tg_id": old_id}, {"$set": {"tg_id": new_id}})
+    mongodb.notes.update_many({"chat_id": old_id},
+                              {"$set": {"chat_id": new_id}})
+    logger.debug("Changed chat's id from %s to %s", old_id, new_id)

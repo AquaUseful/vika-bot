@@ -35,5 +35,6 @@ bot.start(bot_token=TOKEN)
 
 bot_info = asyncio.get_event_loop().run_until_complete(bot.get_me())
 BOT_USERNAME = bot_info.username
+BOT_ID = bot_info.id
 
 logger.info("Vika bot started!")

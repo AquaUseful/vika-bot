@@ -6,8 +6,7 @@ from bot.utils import db
 
 
 async def get_admins(chat_id: int, only_ids=False):
-    admins = await bot.get_participants(chat_id, filter=ChannelParticipantsAdmins)
-    print(admins)
+    admins = await bot.get_participants(chat_id, filter=ChannelParticipantsAdmins())
     if only_ids:
         admins = tuple(map(lambda admin: admin.id, admins))
     return admins
@@ -26,3 +25,8 @@ async def is_user_admin(chat_id: int, user_id: int):
 
 async def get_command_args(commnad_message: str):
     return commnad_message.split()[1:]
+
+
+async def is_user_admin(chat_id, user_id):
+    chat = await db.get_chat(chat_id, ["admins"])
+    return user_id in chat["admins"]

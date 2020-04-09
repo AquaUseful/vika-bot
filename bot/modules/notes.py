@@ -22,10 +22,10 @@ async def add_note(event):
 @decorators.only_public
 async def shown_note(event):
     title = (await utils.get_command_args(event.message.raw_text))[0]
-    note = await db.get_note_text(event.chat.id, title)
-    logger.debug("Got %s text: %s", title, note)
+    note = await db.get_note(event.chat.id, title)
+    logger.debug("Got %s text: %s", title, note["text"])
     if note:
-        await event.reply(note)
+        await event.reply(note["text"])
     else:
         await event.reply(f"Note {title} not found!")
 
