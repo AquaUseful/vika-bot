@@ -3,6 +3,7 @@ import logging
 import telethon
 import pymongo
 import os
+from motor import motor_asyncio
 from bot import config
 
 logging.basicConfig(format="[%(asctime)s] (%(name)s) %(levelname)s: %(message)s",
@@ -18,16 +19,19 @@ TOKEN = config.TOKEN
 NAME = TOKEN.split(":")[0]
 
 if "IS_HEROKU" in os.environ:
-    mongo_cli = pymongo.MongoClient(os.environ["MONGODB_URI"])
+    mongo_cli = motor_asyncio.AsyncIOMotorClient(os.environ["MONGO_URI"])
 else:
-    mongo_cli = pymongo.MongoClient(config.MONGO_CONN, config.MONGO_PORT)
+    mongo_cli = motor_asyncio.AsyncIOMotorClient(
+        config.MONGO_CONN, config.MONGO_PORT)
 mongodb = mongo_cli.vika_bot
 if config.INIT_DB:
     logger.info("Initialising db indexes")
-    mongodb.users.create_index([("tg_id", pymongo.ASCENDING)], unique=True)
-    mongodb.chats.create_index([("tg_id", pymongo.ASCENDING)], unique=True)
-    mongodb.notes.create_index([("chat_id", pymongo.ASCENDING),
-                                ("title", pymongo.ASCENDING)], unique=True)
+    asyncio.gather(
+        mongodb.users.create_index(
+            [("tg_id", pymongo.ASCENDING)], unique=True),
+        mongodb.chats.create_index(
+            [("tg_id", pymongo.ASCENDING)], unique=True),
+        mongodb.notes.create_index([("chat_id", pymongo.ASCENDING), ("title", pymongo.ASCENDING)], unique=True))
 
 bot = telethon.TelegramClient(NAME, config.API_ID, config.API_HASH,
                               proxy=config.PROXY)
