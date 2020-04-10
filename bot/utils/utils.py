@@ -1,8 +1,11 @@
 import telethon
-from telethon.tl.types import ChannelParticipantsAdmins
+import importlib
+import sys
 import asyncio
-from bot import ADMINS, bot
+from bot import ADMINS, bot, logger
+from bot.modules import ALL_MODULES
 from bot.utils import db
+from telethon.tl.types import ChannelParticipantsAdmins
 
 
 async def get_admins(chat_id: int, only_ids=False):
@@ -30,3 +33,23 @@ async def get_command_args(commnad_message: str):
 async def is_user_admin(chat_id, user_id):
     chat = await db.get_chat(chat_id, ["admins"])
     return user_id in chat["admins"]
+
+
+async def load_modules():
+    logger.info("Started loading modules...")
+    for module in ALL_MODULES:
+        modulename = module.split(".")[0]
+        importlib.import_module(f"bot.modules.{modulename}")
+        logger.debug("Module %s imported", module)
+    logger.info("All modules loaded!")
+
+
+async def disconnect_bot():
+    logger.info("Disconnection...")
+    await bot.disconnect()
+    # asyncio.get_event_loop().stop()
+
+
+async def catch_up():
+    logger.info("Catching up missing updates...")
+    await bot.catch_up()
