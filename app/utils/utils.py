@@ -7,6 +7,6 @@ async def load_modules():
     logger.info("Started loading modules...")
     for module in ALL_MODULES:
         modulename = module.split(".")[0]
-        importlib.import_module(f"bot.modules.{modulename}")
+        importlib.import_module(f"app.modules.{modulename}")
         logger.debug("Module %s imported", module)
     logger.info("All modules loaded!")

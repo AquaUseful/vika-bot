@@ -2,9 +2,11 @@ import asyncio
 import hypercorn
 import signal
 import bot
-from app import app
-from app import config
-from bot.utils import utils
+import app
+import sys
+from app.utils import utils as app_utils
+from bot.utils import utils as bot_utils
+
 
 shutdown_event = asyncio.Event()
 
@@ -13,22 +15,20 @@ def signal_handler():
     shutdown_event.set()
 
 
-@app.before_serving
+@app.app.before_serving
 async def startbot():
-    await bot.utils.utils.load_modules()
+    await bot_utils.load_modules()
     if bot.config.CATCH_UP:
-        await bot.utils.utils.catch_up()
+        await bot_utils.catch_up()
 
 
-@app.after_serving
+@app.app.after_serving
 async def stopbot():
-    await bot.utils.utils.disconnect_bot()
+    await bot_utils.disconnect_bot()
 
-
-hypercorn_cfg = hypercorn.Config()
-
+asyncio.ensure_future(app_utils.load_modules())
 
 loop = asyncio.get_event_loop()
 loop.add_signal_handler(signal.SIGINT, signal_handler)
 loop.run_until_complete(hypercorn.asyncio.serve(
-    app, hypercorn_cfg, shutdown_trigger=shutdown_event.wait))
+    app.app, app.hypercorn_cfg, shutdown_trigger=shutdown_event.wait))
