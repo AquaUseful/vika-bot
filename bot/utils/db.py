@@ -29,7 +29,8 @@ async def add_chat_to_db(chat: telethon.types.Chat):
         "title": chat.title,
         "members": members,
         "admins": admins,
-        "welcome": None
+        "welcome": None,
+        "token": None
     }
     old_chat = await mongodb.chats.find_one({"tg_id": chat.id})
     if old_chat:
@@ -72,6 +73,10 @@ async def delete_note(chat_id: int, title: str):
 async def get_chat(tg_id: int, projection=None):
     chat = await mongodb.chats.find_one({"tg_id": tg_id}, projection)
     return chat
+
+
+async def get_chat_by_token(token: str, projection=None):
+    chat = await mongodb.chats.find_one({"token": token}, projection)
 
 
 async def update_chat(tg_id: int, query):
