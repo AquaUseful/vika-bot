@@ -11,4 +11,4 @@ async def migrate_chat(event):
         old_id = event.message.to_id.chat_id
         new_id = event.message.action.channel_id
         logger.info("Chat %s migrated to id %s", old_id, new_id)
-        db.change_chat_id(old_id, new_id)
+        await db.change_chat_id(old_id, new_id)
