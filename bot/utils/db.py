@@ -77,6 +77,7 @@ async def get_chat(tg_id: int, projection=None):
 
 async def get_chat_by_token(token: str, projection=None):
     chat = await mongodb.chats.find_one({"token": token}, projection)
+    return chat
 
 
 async def update_chat(tg_id: int, query):
