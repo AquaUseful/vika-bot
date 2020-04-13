@@ -4,7 +4,7 @@ import signal
 import bot
 import app
 import sys
-from app.utils import utils as app_utils
+from app.utils import blueprints
 from bot.utils import utils as bot_utils
 
 
@@ -16,17 +16,17 @@ def signal_handler():
 
 
 @app.app.before_serving
-async def startbot():
+async def startup():
     await bot_utils.load_modules()
     if bot.config.CATCH_UP:
         await bot_utils.catch_up()
 
 
 @app.app.after_serving
-async def stopbot():
+async def shutdown():
     await bot_utils.disconnect_bot()
 
-asyncio.ensure_future(app_utils.load_modules())
+asyncio.ensure_future(blueprints.register_blueprints())
 
 loop = asyncio.get_event_loop()
 loop.add_signal_handler(signal.SIGINT, signal_handler)
