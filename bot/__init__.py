@@ -8,7 +8,6 @@ from bot import config
 
 logging.basicConfig(format="[%(asctime)s] (%(name)s) %(levelname)s: %(message)s",
                     level=logging.DEBUG)
-
 logger = logging.getLogger(__name__)
 
 logger.info("Loading config...")
@@ -31,6 +30,7 @@ if config.INIT_DB:
             [("tg_id", pymongo.ASCENDING)], unique=True),
         mongodb.chats.create_index(
             [("tg_id", pymongo.ASCENDING)], unique=True),
+        mongodb.chats.create_index([("token", pymongo.HASHED)]),
         mongodb.notes.create_index([("chat_id", pymongo.ASCENDING), ("title", pymongo.ASCENDING)], unique=True))
 
 bot = telethon.TelegramClient(NAME, config.API_ID, config.API_HASH,
