@@ -3,6 +3,7 @@ from app.utils import decorators
 from bot.api import tokens as bot_tokens
 from bot.api import users as bot_users
 
+blueprint = quart.Blueprint("chats", __name__)
 
 
 @blueprint.route("/api/chats/get_user_ids", methods=["POST"])
