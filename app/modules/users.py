@@ -1,24 +1,10 @@
 import quart
 import typing
-from bot import logger
+from app import logger
 from bot.api import users as bot_users
-from bot.api import tokens as bot_tokens
 from app.utils import decorators, utils
 
-blueprint = quart.Blueprint(__name__, __name__)
-
-
-@blueprint.route("/api/chat/get_user_ids", methods=["POST"])
-@decorators.req_fields({"token": str})
-@decorators.token_verify
-async def user_list():
-    req_json = await quart.request.json
-    token = req_json["token"]
-    chat_id = await bot_tokens.get_chat_id_by_token(token)
-    users = await bot_users.get_chat_members(chat_id)
-    return quart.jsonify({
-        "users": users
-    })
+blueprint = quart.Blueprint("users", __name__)
 
 
 @blueprint.route("/api/users/getinfo", methods=["POST"])
