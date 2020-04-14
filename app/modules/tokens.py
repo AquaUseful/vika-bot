@@ -10,5 +10,5 @@ blueprint = quart.Blueprint("tokens", __name__)
 async def token_verify():
     json_resp = await quart.request.json
     token = json_resp["token"]
-    result = bot_tokens.verify_token(token)
+    result = await bot_tokens.verify_token(token)
     return quart.jsonify({"result": result})
