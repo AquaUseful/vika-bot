@@ -6,7 +6,7 @@ from bot.api import users as bot_users
 blueprint = quart.Blueprint("chats", __name__)
 
 
-@blueprint.route("/api/chats/get_user_ids", methods=["POST"])
+@blueprint.route("/api/chats/user_ids", methods=["POST"])
 @decorators.req_fields({"token": str})
 @decorators.token_verify
 async def user_list():
@@ -17,3 +17,10 @@ async def user_list():
     return quart.jsonify({
         "users": users
     })
+
+@blueprint.route("/api/chats/title")
+@decorators.req_fields({"token": str})
+@decorators.token_verify
+async def title():
+    req_json = await quart.request.json
+    
