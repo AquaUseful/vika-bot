@@ -7,7 +7,7 @@ from app.utils import decorators, utils
 blueprint = quart.Blueprint("users", __name__)
 
 
-@blueprint.route("/api/users/getinfo", methods=["POST"])
+@blueprint.route("/api/users/info", methods=["POST"])
 @decorators.req_fields({"ids": typing.Iterable})
 async def get_user():
     req_json = await quart.request.json
