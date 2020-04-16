@@ -18,3 +18,13 @@ async def get_user():
     user_dict = {user.id: {item[0]: item[1] for item in vars(user).items() if utils.is_jsonable(item[1])}
                  for user in users}
     return quart.jsonify(user_dict)
+
+
+@blueprint.route("/api/users/<int:user_id>/photo", methods=["GET"])
+async def photo(user_id):
+    photo = await bot_users.get_last_photo(user_id)
+    resp = await quart.make_response(photo)
+    resp.headers.set("Content-Type", "image/jpeg")
+    resp.headers.set("Content-Disposition", "attachment",
+                     filename=f"{user_id}.jpeg")
+    return resp
