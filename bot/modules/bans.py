@@ -22,8 +22,7 @@ async def ban_user_by_username(event):
 @decorators.bot_admin()
 @decorators.must_be_reply()
 async def ban_user_by_message(event):
-    reply_to_id = event.message.reply_to_msg_id
-    reply_to_msg = await bot.get_messages(event.chat, ids=reply_to_id)
+    reply_to_msg = await event.message.get_reply_message()
     reply_sender = reply_to_msg.sender
     logger.debug("Trying to ban %s", reply_sender.id)
     if await utils.is_user_admin(event.chat.id, reply_sender.id):
