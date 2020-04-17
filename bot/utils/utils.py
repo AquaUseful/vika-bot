@@ -2,10 +2,18 @@ import telethon
 import importlib
 import sys
 import asyncio
+import re
 from bot import ADMINS, bot, logger
 from bot.modules import ALL_MODULES
 from bot.utils import db
-from telethon.tl.types import ChannelParticipantsAdmins
+from telethon.tl.types import ChannelParticipantsAdmins, ChannelParticipantsBanned
+
+
+async def get_banned(chat_id: int, only_ids=False):
+    banned = await bot.get_participants(chat_id, filter=ChannelParticipantsBanned())
+    if only_ids:
+        banned = tuple(map(lambda member: member.id, banned))
+    return banned
 
 
 async def get_admins(chat_id: int, only_ids=False):
@@ -53,3 +61,10 @@ async def disconnect_bot():
 async def catch_up():
     logger.info("Catching up missing updates...")
     await bot.catch_up()
+
+
+#async def parse_identifier(string: str):
+#    if string.startswith("@"):
+#        username = string[1:]
+#        return username
+#    else:
