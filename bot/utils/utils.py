@@ -63,8 +63,10 @@ async def catch_up():
     await bot.catch_up()
 
 
-#async def parse_identifier(string: str):
-#    if string.startswith("@"):
-#        username = string[1:]
-#        return username
-#    else:
+async def parse_identifier(string: str):
+    if string.startswith("@"):
+        username = string[1:]
+        return username
+    elif re.match("^(.*\(tg\:\/\/user\?id\=[0-9]+\))$", string):
+        id_str = re.search("[0-9]+", string)[0]
+        return int(id_str)
