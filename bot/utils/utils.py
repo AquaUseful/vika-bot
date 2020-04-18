@@ -10,7 +10,7 @@ from telethon.tl.types import ChannelParticipantsAdmins, ChannelParticipantsBann
 
 
 async def get_banned(chat_id: int, only_ids=False):
-    banned = await bot.get_participants(chat_id, filter=ChannelParticipantsBanned())
+    banned = await bot.get_participants(chat_id, filter=ChannelParticipantsBanned(""))
     if only_ids:
         banned = tuple(map(lambda member: member.id, banned))
     return banned
@@ -70,3 +70,8 @@ async def parse_identifier(string: str):
     elif re.match("^(.*\(tg\:\/\/user\?id\=[0-9]+\))$", string):
         id_str = re.search("[0-9]+", string)[0]
         return int(id_str)
+
+
+async def ban_user(chat_id, user_id):
+    await db.update_chat(chat_id, {"$addToSet": {"banned": "user_id"}})
+    await bot.edit_permissions(chat_id, user_id, view_messages=False)

@@ -23,12 +23,14 @@ async def add_user_to_db(user: telethon.types.User):
 
 async def add_chat_to_db(chat: telethon.types.Chat):
     admins = await utils.get_admins(chat.id, only_ids=True)
+    banned = await utils.get_banned(chat.id, only_ids=True)
     members = await utils.get_members(chat.id, only_ids=True)
     new_chat = {
         "tg_id": chat.id,
         "title": chat.title,
         "members": members,
         "admins": admins,
+        "banned": banned,
         "welcome": None,
         "token": None
     }

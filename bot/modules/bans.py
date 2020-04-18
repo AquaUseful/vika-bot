@@ -14,7 +14,7 @@ async def ban_user_by_username(event):
     if await utils.is_user_admin(event.chat.id, user_id):
         await event.reply("I can't ban admins!")
     else:
-        await bot.edit_permissions(event.chat, user_id, view_messages=False)
+        await utils.ban_user(event.chat.id, user_id)
 
 
 @decorators.smart_command("ban")
@@ -28,4 +28,4 @@ async def ban_user_by_message(event):
     if await utils.is_user_admin(event.chat.id, reply_sender.id):
         await event.reply("I can't ban admins!")
     else:
-        await bot.edit_permissions(event.chat, reply_sender, view_messages=False)
+        await utils.ban_user(event.chat.id, reply_sender.id)
