@@ -97,3 +97,16 @@ def on_user_left(hangle_left=True, hangle_kick=True):
                 await func(event)
         bot.add_aevent_handler(wrapper, telethon.events.ChatAction())
     return decorator
+
+
+def on_self_join(func):
+    @functools.wraps(func)
+    async def wrapper(event):
+        if (event.user_joined or event.user_added) and (event.user is not None and event.user.id == BOT_ID):
+            logger.debug("Bot joined/added to new chat (%s)", event.chat.id)
+            await func(event)
+    bot.add_event_handler(wrapper, telethon.events.ChatAction())
+
+
+def on_chat_action(func):
+    bot.add_event_handler(func, telethon.events.ChatAction())
