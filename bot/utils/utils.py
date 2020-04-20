@@ -75,3 +75,9 @@ async def parse_identifier(string: str):
 async def ban_user(chat_id, user_id):
     await db.update_chat(chat_id, {"$addToSet": {"banned": user_id}})
     await bot.edit_permissions(chat_id, user_id, view_messages=False)
+
+
+async def kick_user(chat_id, user_id):
+    await db.update_chat(chat_id, {"$pull": {"users": user_id}})
+    await bot.edit_permissions(chat_id, user_id, view_messages=False)
+    await bot.edit_permissions(chat_id, user_id)
