@@ -11,7 +11,7 @@ def req_fields(fields: dict):
             logger.debug("Testing reqest for requred fields...")
             req_json = await quart.request.json
             if fields.keys() == req_json.keys() and \
-                    all(map(lambda item: isinstance(item[0], fields[item[0]]), req_json.items())):
+                    all(map(lambda item: isinstance(item[1], fields[item[0]]), req_json.items())):
                 logger.debug("Request successfully tested")
                 return await func(*args, **kwargs)
             else:
