@@ -23,6 +23,8 @@ async def get_user():
 @blueprint.route("/api/users/<int:user_id>/photo", methods=["GET"])
 async def photo(user_id):
     photo = await bot_users.get_last_photo(user_id)
+    if photo is None:
+        await quart.abort(404)
     resp = await quart.make_response(photo)
     resp.headers.set("Content-Type", "image/jpeg")
     resp.headers.set("Content-Disposition", "attachment",
