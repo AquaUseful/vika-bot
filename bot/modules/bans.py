@@ -9,12 +9,13 @@ from bot.utils import decorators, db, utils
 async def ban_user_by_username(event):
     firstarg = (await utils.get_command_args(event.message.text))[0]
     user_identifier = await utils.parse_identifier(firstarg)
-    user_id = (await bot.get_entity(user_identifier)).id
-    logger.debug("Trying to ban: %s", user_id)
-    if await utils.is_user_admin(event.chat.id, user_id):
+    user = await bot.get_entity(user_identifier)
+    logger.debug("Trying to ban: %s", user.id)
+    if await utils.is_user_admin(event.chat.id, user.id):
         await event.reply("I can't ban admins!")
     else:
-        await utils.ban_user(event.chat.id, user_id)
+        await utils.ban_user(event.chat.id, user.id)
+        await bot.send_message(event.chat, f"{user.first_name} banned by {event.message.sender.first_name}")
 
 
 @decorators.smart_command("ban")
@@ -29,3 +30,4 @@ async def ban_user_by_message(event):
         await event.reply("I can't ban admins!")
     else:
         await utils.ban_user(event.chat.id, reply_sender.id)
+        await bot.send_message(event.chat, f"{reply_sender.first_name} banned by {event.message.sender.first_name}")
