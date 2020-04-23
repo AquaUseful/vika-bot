@@ -30,10 +30,6 @@ async def get_members(chat_id: int, only_ids=False):
     return members
 
 
-async def is_user_admin(chat_id: int, user_id: int):
-    return user_id in db.get_chat(chat_id, ["admins"])
-
-
 async def get_command_args(commnad_message: str):
     return commnad_message.split()[1:]
 
@@ -81,3 +77,13 @@ async def kick_user(chat_id, user_id):
     await db.update_chat(chat_id, {"$pull": {"members": user_id}})
     await bot.edit_permissions(chat_id, user_id, view_messages=False)
     await bot.edit_permissions(chat_id, user_id)
+
+
+async def unban_user(chat_id, user_id):
+    await db.update_chat(chat_id, {"$pull": {"banned": user_id}})
+    await db.edit_permissions(chat_id, user_id)
+
+
+async def is_user_banned(chat_id, user_id):
+    chat = await db.get_chat()
+    return user_id in chat["banned"]
