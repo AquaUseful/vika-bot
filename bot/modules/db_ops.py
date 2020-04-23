@@ -11,9 +11,9 @@ async def add_chat(event):
 @decorators.on_chat_action
 async def update_chat(event):
     logger.debug("Got chat action, updating info...")
-    members = utils.get_members(event.chat.id, only_ids=True)
-    admins = utils.get_admins(event.chat.id, only_ids=True)
-    banned = utils.get_banned(event.chat_id, only_ids=True)
+    members = await utils.get_members(event.chat.id, only_ids=True)
+    admins = await utils.get_admins(event.chat.id, only_ids=True)
+    banned = await utils.get_banned(event.chat_id, only_ids=True)
     await db.update_chat(event.chat.id, {"$set": {"members": members,
                                                   "admins": admins,
                                                   "banned": banned}})
