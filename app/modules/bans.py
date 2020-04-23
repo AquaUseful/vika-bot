@@ -15,3 +15,14 @@ async def ban_user():
     chat_id = await bot_tokens.get_chat_id_by_token(token)
     result = await bot_bans.ban_user(chat_id, req_json["user_id"])
     return quart.jsonify({"result": result})
+
+
+@blueprint.route("/api/bans/unban", methods=["POST"])
+@decorators.req_fields({"token": str, "user_id": int})
+@decorators.token_verify
+async def unban_user():
+    req_json = await quart.request.json
+    token = req_json["token"]
+    chat_id = await bot_tokens.get_chat_id_by_token(token)
+    result = await bot_bans.unban_user(chat_id, req_json["user_id"])
+    return quart.jsonify({"result": result})
