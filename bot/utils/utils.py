@@ -80,7 +80,7 @@ async def kick_user(chat_id, user_id):
 
 
 async def unban_user(chat_id, user_id):
-    await db.update_chat(chat_id, {"$pull": {"banned": user_id}})
+    await db.update_chat(chat_id, {"$pull": {"banned": user_id, "members": user_id}})
     await bot.edit_permissions(chat_id, user_id)
 
 

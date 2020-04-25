@@ -13,5 +13,5 @@ async def ban_user():
     req_json = await quart.request.json
     token = req_json["token"]
     chat_id = await bot_tokens.get_chat_id_by_token(token)
-    result = await bot_kicks.ban_user(chat_id, req_json["user_id"])
+    result = await bot_kicks.kick_user(chat_id, req_json["user_id"])
     return quart.jsonify({"result": result})
