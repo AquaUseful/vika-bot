@@ -20,8 +20,7 @@ NAME = TOKEN.split(":")[0]
 if "IS_HEROKU" in os.environ:
     mongo_cli = motor_asyncio.AsyncIOMotorClient(os.environ["MONGO_URI"])
 else:
-    mongo_cli = motor_asyncio.AsyncIOMotorClient(
-        config.MONGO_CONN, config.MONGO_PORT)
+    mongo_cli = motor_asyncio.AsyncIOMotorClient(config.MONGO_URI)
 mongodb = mongo_cli.vika_bot
 if config.INIT_DB:
     logger.info("Initialising db indexes")
