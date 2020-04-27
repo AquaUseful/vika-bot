@@ -87,3 +87,18 @@ async def unban_user(chat_id, user_id):
 async def is_user_banned(chat_id, user_id):
     chat = await db.get_chat(chat_id)
     return user_id in chat["banned"]
+
+
+async def promote_user(chat_id, user_id):
+    await db.update_chat(chat_id, {"$addToSet": {"admins": user_id}})
+    await bot.edit_admin(chat_id, user_id,
+                         change_info=True,
+                         delete_messages=True,
+                         ban_users=True,
+                         invite_users=True,
+                         pin_messages=True)
+
+
+async def demote_user(chat_id, user_id):
+    await db.update_chat(chat_id, {"$pull": {"admins": user_id}})
+    await bot.edit_admin(chat_id, user_id, is_admin=False)
