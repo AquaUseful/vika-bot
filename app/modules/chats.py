@@ -29,3 +29,20 @@ async def title():
     chat_id = await bot_tokens.get_chat_id_by_token(token)
     chat = await bot_chats.get_chat_info(chat_id)
     return quart.jsonify(chat)
+
+
+@blueprint.route("/api/chats/photo", methods=["POST"])
+@decorators.req_fields({"token": str})
+@decorators.token_verify
+async def photo():
+    req_json = await quart.request.json
+    token = req_json["token"]
+    chat_id = await bot_tokens.get_chat_id_by_token(token)
+    photo = await bot_chats.get_last_photo(chat_id)
+    if photo is None:
+        await quart.abort(404)
+    resp = await quart.make_response(photo)
+    resp.headers.set("Content-Type", "image/jpeg")
+    resp.headers.set("Content-Disposition", "attachment",
+                     filename=f"{chat_id}.jpeg")
+    return resp
