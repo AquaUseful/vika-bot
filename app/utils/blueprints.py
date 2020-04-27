@@ -1,5 +1,5 @@
 from app import app
-from app.modules import users, chats, tokens, bans, kicks
+from app.modules import users, chats, tokens, bans, kicks, promotions
 
 
 async def register_blueprints():
@@ -8,3 +8,4 @@ async def register_blueprints():
     app.register_blueprint(tokens.blueprint)
     app.register_blueprint(bans.blueprint)
     app.register_blueprint(kicks.blueprint)
+    app.register_blueprint(promotions.blueprint)
