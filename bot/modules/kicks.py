@@ -19,9 +19,9 @@ async def ban_user_by_username(event):
 
 
 @decorators.smart_command("kick")
+@decorators.must_be_reply()
 @decorators.sender_admin()
 @decorators.bot_admin()
-@decorators.must_be_reply()
 async def ban_user_by_message(event):
     reply_to_msg = await event.message.get_reply_message()
     reply_sender = reply_to_msg.sender
