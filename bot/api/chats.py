@@ -8,7 +8,7 @@ async def get_chat_member_ids(chat_id):
 
 
 async def get_chat_info(chat_id):
-    chat = await db.get_chat(chat_id, {"_id": False, "token": False})
+    chat = await db.get_chat(chat_id, {"_id": False, "token": False, "welcome": False})
     return chat
 
 
