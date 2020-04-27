@@ -1,4 +1,4 @@
-from bot import bot, logger
+from bot import bot, logger, BOT_ID
 from bot.utils import utils, decorators
 
 
@@ -42,6 +42,8 @@ async def demote_user_by_username(event):
     logger.debug("Trying to promote: %s", user.id)
     if event.sender == user:
         await event.reply("You can't demote yourself!")
+    elif user.id == BOT_ID:
+        await event.reply("I can't demote myself!")
     elif await utils.is_user_admin(event.chat.id, user.id):
         await utils.demote_user(event.chat.id, user.id)
         await event.reply(f"{user.first_name} demoted by {event.message.sender.first_name}")
@@ -59,6 +61,8 @@ async def demote_user_by_message(event):
     logger.debug("Trying to promote %s", reply_sender.id)
     if event.sender == reply_sender:
         await event.reply("You can't demote yourself!")
+    elif reply_sender == BOT_ID:
+        await event.reply("I can't demote myself!")
     elif await utils.is_user_admin(event.chat.id, reply_sender.id):
         await utils.demote_user(event.chat.id, reply_sender.id)
         await event.reply(f"{reply_sender.first_name} demoted by {event.message.sender.first_name}")
