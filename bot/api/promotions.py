@@ -1,3 +1,4 @@
+import telethon
 from bot import BOT_ID
 from bot.utils import utils
 
@@ -14,7 +15,10 @@ async def demote_user(chat_id, user_id):
     if user_id == BOT_ID:
         return False
     elif await utils.is_user_admin(chat_id, user_id):
-        await utils.demote_user(chat_id, user_id)
-        return True
+        try:
+            await utils.demote_user(chat_id, user_id)
+            return True
+        except telethon.errors.BotChannelsNaError:
+            return False
     else:
         return False

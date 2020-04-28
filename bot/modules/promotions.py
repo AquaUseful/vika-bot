@@ -14,8 +14,11 @@ async def promote_user_by_username(event):
     if await utils.is_user_admin(event.chat.id, user.id):
         await event.reply("This user is already admin!")
     else:
-        await utils.promote_user(event.chat.id, user.id)
-        await bot.send_message(event.chat, f"{user.first_name} promoted by {event.message.sender.first_name}")
+        try:
+            await utils.promote_user(event.chat.id, user.id)
+            await bot.send_message(event.chat, f"{user.first_name} promoted by {event.message.sender.first_name}")
+        except telethon.errors.BotChannelsNaError:
+            await event.reply("Sorry, I can't promote users!")
 
 
 @decorators.smart_command("promote")
@@ -29,8 +32,11 @@ async def promote_user_by_message(event):
     if await utils.is_user_admin(event.chat.id, reply_sender.id):
         await event.reply("This user is already admin")
     else:
-        await utils.promote_user(event.chat.id, reply_sender.id)
-        await bot.send_message(event.chat, f"{reply_sender.first_name} promoted by {event.message.sender.first_name}")
+        try:
+            await utils.promote_user(event.chat.id, reply_sender.id)
+            await bot.send_message(event.chat, f"{reply_sender.first_name} promoted by {event.message.sender.first_name}")
+        except telethon.errors.BotChannelsNaError:
+            await event.reply("Sorry, I can't promote users!")
 
 
 @decorators.smart_command("demote", has_args=True)

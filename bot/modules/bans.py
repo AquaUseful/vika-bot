@@ -16,8 +16,11 @@ async def ban_user_by_username(event):
     elif await utils.is_user_admin(event.chat.id, user.id):
         await event.reply("I can't ban admins!")
     else:
-        await utils.ban_user(event.chat.id, user.id)
-        await bot.send_message(event.chat, f"{user.first_name} banned by {event.message.sender.first_name}")
+        try:
+            await utils.ban_user(event.chat.id, user.id)
+            await bot.send_message(event.chat, f"{user.first_name} banned by {event.message.sender.first_name}")
+        except telethon.errors.ChatAdminRequiredError:
+            await event.reply("I have no permissions to do this!")
 
 
 @decorators.smart_command("ban")
@@ -33,8 +36,11 @@ async def ban_user_by_message(event):
     elif await utils.is_user_admin(event.chat.id, reply_sender.id):
         await event.reply("I can't ban admins!")
     else:
-        await utils.ban_user(event.chat.id, reply_sender.id)
-        await bot.send_message(event.chat, f"{reply_sender.first_name} banned by {event.message.sender.first_name}")
+        try:
+            await utils.ban_user(event.chat.id, reply_sender.id)
+            await bot.send_message(event.chat, f"{reply_sender.first_name} banned by {event.message.sender.first_name}")
+        except telethon.errors.ChatAdminRequiredError:
+            await event.reply("I have no permissions to do this!")
 
 
 @decorators.smart_command("unban", has_args=True)
@@ -46,8 +52,11 @@ async def unban_user_by_username(event):
     user = await bot.get_entity(user_identifier)
     logger.debug("Trying to ban: %s", user.id)
     if await utils.is_user_banned(event.chat.id, user.id):
-        await utils.unban_user(event.chat.id, user.id)
-        await bot.send_message(event.chat, f"{user.first_name} unbanned by {event.message.sender.first_name}")
+        try:
+            await utils.unban_user(event.chat.id, user.id)
+            await bot.send_message(event.chat, f"{user.first_name} unbanned by {event.message.sender.first_name}")
+        except telethon.errors.ChatAdminRequiredError:
+            await event.reply("I have no permissions to do this!")
     else:
         await event.reply("This user is not banned!")
 
@@ -61,7 +70,10 @@ async def unban_user_by_message(event):
     reply_sender = reply_to_msg.sender
     logger.debug("Trying to ban %s", reply_sender.id)
     if await utils.is_user_banned(event.chat.id, reply_sender.id):
-        await utils.unban_user(event.chat.id, reply_sender.id)
-        await bot.send_message(event.chat, f"{reply_sender.first_name} unbanned by {event.message.sender.first_name}")
+        try:
+            await utils.unban_user(event.chat.id, reply_sender.id)
+            await bot.send_message(event.chat, f"{reply_sender.first_name} unbanned by {event.message.sender.first_name}")
+        except telethon.errors.ChatAdminRequiredError:
+            await event.reply("I have no permissions to do this!")
     else:
         await event.reply("This user is not banned!")

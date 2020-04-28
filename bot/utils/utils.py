@@ -69,20 +69,28 @@ async def parse_identifier(string: str):
 
 
 async def ban_user(chat_id, user_id):
-    await db.update_chat(chat_id, {"$addToSet": {"banned": user_id}})
-    await bot.edit_permissions(chat_id, user_id, view_messages=False)
+    try:
+        await bot.edit_permissions(chat_id, user_id, view_messages=False)
+        await db.update_chat(chat_id, {"$addToSet": {"banned": user_id}})
+    except Exception as exc:
+        raise exc
 
 
 async def kick_user(chat_id, user_id):
-    await db.update_chat(chat_id, {"$pull": {"members": user_id}})
-    await bot.edit_permissions(chat_id, user_id, view_messages=False)
-    await bot.edit_permissions(chat_id, user_id)
+    try:
+        await bot.edit_permissions(chat_id, user_id, view_messages=False)
+        await bot.edit_permissions(chat_id, user_id)
+        await db.update_chat(chat_id, {"$pull": {"members": user_id}})
+    except Exception as exc:
+        raise exc
 
 
 async def unban_user(chat_id, user_id):
-    await db.update_chat(chat_id, {"$pull": {"banned": user_id, "members": user_id}})
-    await bot.edit_permissions(chat_id, user_id)
-
+    try:
+        await bot.edit_permissions(chat_id, user_id)
+        await db.update_chat(chat_id, {"$pull": {"banned": user_id, "members": user_id}})
+    except Exception as exc:
+        raise exc
 
 async def is_user_banned(chat_id, user_id):
     chat = await db.get_chat(chat_id)
@@ -97,10 +105,9 @@ async def promote_user(chat_id, user_id):
                              ban_users=True,
                              invite_users=True,
                              pin_messages=True)
+        await db.update_chat(chat_id, {"$addToSet": {"admins": user_id}})
     except Exception as exc:
         raise exc
-    else:
-        await db.update_chat(chat_id, {"$addToSet": {"admins": user_id}})
 
 
 async def demote_user(chat_id, user_id):
@@ -111,7 +118,6 @@ async def demote_user(chat_id, user_id):
                              ban_users=False,
                              invite_users=False,
                              pin_messages=False)
+        await db.update_chat(chat_id, {"$pull": {"admins": user_id}})
     except Exception as exc:
         raise exc
-    else:
-        await db.update_chat(chat_id, {"$pull": {"admins": user_id}})

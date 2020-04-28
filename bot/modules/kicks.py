@@ -14,8 +14,11 @@ async def ban_user_by_username(event):
     if await utils.is_user_admin(event.chat.id, user.id):
         await event.reply("I can't kick admins!")
     else:
-        await utils.kick_user(event.chat.id, user.id)
-        await bot.send_message(event.chat, f"{user.first_name} kicked by {event.message.sender.first_name}")
+        try:
+            await utils.kick_user(event.chat.id, user.id)
+            await bot.send_message(event.chat, f"{user.first_name} kicked by {event.message.sender.first_name}")
+        except telethon.errors.ChatAdminRequiredError:
+            await event.reply("I have no permissions to do this!")
 
 
 @decorators.smart_command("kick")
@@ -29,5 +32,8 @@ async def ban_user_by_message(event):
     if await utils.is_user_admin(event.chat.id, reply_sender.id):
         await event.reply("I can't kick admins!")
     else:
-        await utils.kick_user(event.chat.id, reply_sender.id)
-        await bot.send_message(event.chat, f"{reply_sender.first_name} kicked by {event.message.sender.first_name}")
+        try:
+            await utils.kick_user(event.chat.id, reply_sender.id)
+            await bot.send_message(event.chat, f"{reply_sender.first_name} kicked by {event.message.sender.first_name}")
+        except telethon.errors.ChatAdminRequiredError:
+            await event.reply("I have no permissions to do this!")
