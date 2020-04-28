@@ -1,3 +1,4 @@
+import telethon
 from bot import bot, logger, BOT_ID
 from bot.utils import utils, decorators
 
@@ -45,8 +46,11 @@ async def demote_user_by_username(event):
     elif user.id == BOT_ID:
         await event.reply("I can't demote myself!")
     elif await utils.is_user_admin(event.chat.id, user.id):
-        await utils.demote_user(event.chat.id, user.id)
-        await event.reply(f"{user.first_name} demoted by {event.message.sender.first_name}")
+        try:
+            await utils.demote_user(event.chat.id, user.id)
+            await event.reply(f"{user.first_name} demoted by {event.message.sender.first_name}")
+        except telethon.errors.BotChannelsNaError:
+            await event.reply(f"Sorry, I can't demote users!")
     else:
         await event.reply(f"{user.first_name} is not admin!")
 
@@ -64,7 +68,10 @@ async def demote_user_by_message(event):
     elif reply_sender == BOT_ID:
         await event.reply("I can't demote myself!")
     elif await utils.is_user_admin(event.chat.id, reply_sender.id):
-        await utils.demote_user(event.chat.id, reply_sender.id)
-        await event.reply(f"{reply_sender.first_name} demoted by {event.message.sender.first_name}")
+        try:
+            await utils.demote_user(event.chat.id, reply_sender.id)
+            await event.reply(f"{reply_sender.first_name} demoted by {event.message.sender.first_name}")
+        except telethon.errors.BotChannelsNaError:
+            await event.reply(f"Sorry, I can't demote users!")
     else:
         await event.reply(f"{reply_sender.first_name} is not admin!")

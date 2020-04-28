@@ -90,15 +90,28 @@ async def is_user_banned(chat_id, user_id):
 
 
 async def promote_user(chat_id, user_id):
-    await db.update_chat(chat_id, {"$addToSet": {"admins": user_id}})
-    await bot.edit_admin(chat_id, user_id,
-                         change_info=True,
-                         delete_messages=True,
-                         ban_users=True,
-                         invite_users=True,
-                         pin_messages=True)
+    try:
+        await bot.edit_admin(chat_id, user_id,
+                             change_info=True,
+                             delete_messages=True,
+                             ban_users=True,
+                             invite_users=True,
+                             pin_messages=True)
+    except Exception as exc:
+        raise exc
+    else:
+        await db.update_chat(chat_id, {"$addToSet": {"admins": user_id}})
 
 
 async def demote_user(chat_id, user_id):
-    await db.update_chat(chat_id, {"$pull": {"admins": user_id}})
-    await bot.edit_admin(chat_id, user_id, is_admin=False)
+    try:
+        await bot.edit_admin(chat_id, user_id,
+                             change_info=False,
+                             delete_messages=False,
+                             ban_users=False,
+                             invite_users=False,
+                             pin_messages=False)
+    except Exception as exc:
+        raise exc
+    else:
+        await db.update_chat(chat_id, {"$pull": {"admins": user_id}})
