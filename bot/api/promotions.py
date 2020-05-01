@@ -18,7 +18,7 @@ async def demote_user(chat_id, user_id):
         try:
             await utils.demote_user(chat_id, user_id)
             return True
-        except telethon.errors.BotChannelsNaError:
+        except (telethon.errors.BotChannelsNaError, telethon.errors.UserCreatorError):
             return False
     else:
         return False
