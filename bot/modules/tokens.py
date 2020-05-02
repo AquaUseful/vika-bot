@@ -30,7 +30,7 @@ async def get_token(chat_id):
 
 
 @decorators.smart_command("token", has_args=True)
-@decorators.only_public
+@decorators.only_group
 @decorators.sender_admin()
 @decorators.bot_admin()
 async def token(event):
@@ -51,7 +51,7 @@ async def token(event):
 
 
 @decorators.smart_command("token")
-@decorators.only_public
+@decorators.only_group
 @decorators.sender_admin()
 @decorators.bot_admin()
 async def token_help(event):

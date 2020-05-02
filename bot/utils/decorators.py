@@ -15,23 +15,23 @@ def smart_command(command, has_args=False, no_pm=False, no_public=False):
     return decorator
 
 
-def only_private(func):
+def only_pm(func):
     @functools.wraps(func)
     async def wrapper(event):
         if event.is_private:
             await func(event)
         else:
-            await event.reply("This command available only in private chats!")
+            await event.reply("This command available only in pm!")
     return wrapper
 
 
-def only_public(func):
+def only_group(func):
     @functools.wraps(func)
     async def wrapper(event):
         if event.is_group:
             await func(event)
         else:
-            await event.reply("This command is only for public chats!")
+            await event.reply("This command is only for groups!")
     return wrapper
 
 
@@ -95,7 +95,7 @@ def on_user_left(hangle_left=True, hangle_kick=True):
         async def wrapper(event):
             if (hangle_left and event.user_left) or (hangle_kick and event.user_kicked):
                 await func(event)
-        bot.add_aevent_handler(wrapper, telethon.events.ChatAction())
+        bot.add_event_handler(wrapper, telethon.events.ChatAction())
     return decorator
 
 

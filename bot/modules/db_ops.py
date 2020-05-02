@@ -21,6 +21,7 @@ async def update_chat(event):
 
 
 @decorators.smart_command("update")
+@decorators.only_group
 async def update_chat_cmd(event):
     await update_chat(event)
     await bot.send_message(event.chat, "Chat data updated")

@@ -4,6 +4,7 @@ from bot.utils import decorators, utils, db
 
 
 @decorators.smart_command("kick", has_args=True)
+@decorators.only_group
 @decorators.sender_admin()
 @decorators.bot_admin()
 async def ban_user_by_username(event):
@@ -22,6 +23,7 @@ async def ban_user_by_username(event):
 
 
 @decorators.smart_command("kick")
+@decorators.only_group
 @decorators.must_be_reply()
 @decorators.sender_admin()
 @decorators.bot_admin()

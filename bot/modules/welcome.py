@@ -5,7 +5,7 @@ from bot.utils import decorators, db, utils
 
 
 @decorators.smart_command("setwelcome", has_args=True)
-@decorators.only_public
+@decorators.only_group
 @decorators.sender_admin()
 async def set_welcome(event):
     title = (await utils.get_command_args(event.message.raw_text))[0]

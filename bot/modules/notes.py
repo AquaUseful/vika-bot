@@ -5,7 +5,7 @@ from bot.utils import decorators, db, utils
 
 
 @decorators.smart_command("addnote", has_args=True)
-@decorators.only_public
+@decorators.only_group
 @decorators.must_be_reply(err_msg="Please a reply a message to add it as a note")
 async def add_note(event):
     reply_to_msg = await event.message.get_reply_message()
@@ -17,7 +17,7 @@ async def add_note(event):
 
 
 @decorators.smart_command("shownote", has_args=True)
-@decorators.only_public
+@decorators.only_group
 async def shown_note(event):
     title = (await utils.get_command_args(event.message.raw_text))[0]
     note = await db.get_note(event.chat.id, title)
@@ -29,7 +29,7 @@ async def shown_note(event):
 
 
 @decorators.smart_command("delnote", has_args=True)
-@decorators.only_public
+@decorators.only_group
 async def del_note(event):
     title = (await utils.get_command_args(event.message.raw_text))[0]
     res = await db.delete_note(event.chat.id, title)

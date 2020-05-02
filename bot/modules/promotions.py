@@ -4,6 +4,7 @@ from bot.utils import utils, decorators
 
 
 @decorators.smart_command("promote", has_args=True)
+@decorators.only_group
 @decorators.bot_admin()
 @decorators.sender_admin()
 async def promote_user_by_username(event):
@@ -22,6 +23,7 @@ async def promote_user_by_username(event):
 
 
 @decorators.smart_command("promote")
+@decorators.only_group
 @decorators.must_be_reply()
 @decorators.bot_admin()
 @decorators.sender_admin()
@@ -40,6 +42,7 @@ async def promote_user_by_message(event):
 
 
 @decorators.smart_command("demote", has_args=True)
+@decorators.only_group
 @decorators.bot_admin()
 @decorators.sender_admin()
 async def demote_user_by_username(event):
@@ -62,6 +65,7 @@ async def demote_user_by_username(event):
 
 
 @decorators.smart_command("demote")
+@decorators.only_group
 @decorators.must_be_reply()
 @decorators.bot_admin()
 @decorators.sender_admin()

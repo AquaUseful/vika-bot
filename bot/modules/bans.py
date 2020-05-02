@@ -4,6 +4,7 @@ from bot.utils import decorators, db, utils
 
 
 @decorators.smart_command("ban", has_args=True)
+@decorators.only_group
 @decorators.sender_admin()
 @decorators.bot_admin()
 async def ban_user_by_username(event):
@@ -24,6 +25,7 @@ async def ban_user_by_username(event):
 
 
 @decorators.smart_command("ban")
+@decorators.only_group
 @decorators.sender_admin()
 @decorators.bot_admin()
 @decorators.must_be_reply()
@@ -44,6 +46,7 @@ async def ban_user_by_message(event):
 
 
 @decorators.smart_command("unban", has_args=True)
+@decorators.only_group
 @decorators.sender_admin()
 @decorators.bot_admin()
 async def unban_user_by_username(event):
@@ -62,6 +65,7 @@ async def unban_user_by_username(event):
 
 
 @decorators.smart_command("unban")
+@decorators.only_group
 @decorators.sender_admin()
 @decorators.bot_admin()
 @decorators.must_be_reply()
