@@ -6,4 +6,4 @@ from bot.utils import decorators
 
 @decorators.smart_command("ping")
 async def ping(event):
-    resp = await event.respond("pong!")
+    await event.respond("pong!")
