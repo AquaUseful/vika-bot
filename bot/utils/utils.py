@@ -3,7 +3,7 @@ import importlib
 import sys
 import asyncio
 import re
-from bot import ADMINS, bot, logger
+from bot import bot, logger
 from bot.modules import ALL_MODULES
 from bot.utils import db
 from telethon.tl.types import ChannelParticipantsAdmins, ChannelParticipantsBanned
