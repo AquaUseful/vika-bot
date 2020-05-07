@@ -13,14 +13,16 @@ logger = logging.getLogger(__name__)
 logger.info("Loading config...")
 OWNER_ID = config.OWNER_ID
 ADMINS = config.ADMINS + (OWNER_ID,)
-WHITELIST = config.WHITELIST + (OWNER_ID,) + ADMINS
 TOKEN = config.TOKEN
 NAME = TOKEN.split(":")[0]
 
+# Use mongo uri from environment if running on heroku
 if "IS_HEROKU" in os.environ:
     mongo_cli = motor_asyncio.AsyncIOMotorClient(os.environ["MONGO_URI"])
 else:
     mongo_cli = motor_asyncio.AsyncIOMotorClient(config.MONGO_URI)
+
+# Initialising database
 mongodb = mongo_cli.vika_bot
 if config.INIT_DB:
     logger.info("Initialising db indexes")
@@ -32,6 +34,7 @@ if config.INIT_DB:
         mongodb.chats.create_index([("token", pymongo.HASHED)]),
         mongodb.notes.create_index([("chat_id", pymongo.ASCENDING), ("title", pymongo.ASCENDING)], unique=True))
 
+# Initialising bot
 bot = telethon.TelegramClient(NAME, config.API_ID, config.API_HASH,
                               proxy=config.PROXY)
 bot.start(bot_token=TOKEN)

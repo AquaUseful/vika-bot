@@ -9,28 +9,29 @@ from bot.utils import db
 from telethon.tl.types import ChannelParticipantsAdmins, ChannelParticipantsBanned
 
 
-async def get_banned(chat_id: int, only_ids=False):
+async def get_banned(chat_id: int, only_ids=False) -> tuple:
     banned = await bot.get_participants(chat_id, filter=ChannelParticipantsBanned(""))
     if only_ids:
         banned = tuple(map(lambda member: member.id, banned))
     return banned
 
 
-async def get_admins(chat_id: int, only_ids=False):
+async def get_admins(chat_id: int, only_ids=False) -> tuple:
     admins = await bot.get_participants(chat_id, filter=ChannelParticipantsAdmins())
     if only_ids:
         admins = tuple(map(lambda admin: admin.id, admins))
     return admins
 
 
-async def get_members(chat_id: int, only_ids=False):
+async def get_members(chat_id: int, only_ids=False) -> tuple:
     members = await bot.get_participants(chat_id)
     if only_ids:
         members = tuple(map(lambda member: member.id, members))
     return members
 
 
-async def get_command_args(commnad_message: str):
+# Parse command args from command message
+async def get_command_args(commnad_message: str) -> list:
     return commnad_message.split()[1:]
 
 
@@ -59,6 +60,7 @@ async def catch_up():
     await bot.catch_up()
 
 
+# Parse id or username from string with user reference
 async def parse_identifier(string: str):
     if string.startswith("@"):
         username = string[1:]
@@ -91,6 +93,7 @@ async def unban_user(chat_id, user_id):
         await db.update_chat(chat_id, {"$pull": {"banned": user_id, "members": user_id}})
     except Exception as exc:
         raise exc
+
 
 async def is_user_banned(chat_id, user_id):
     chat = await db.get_chat(chat_id)

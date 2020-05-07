@@ -1,0 +1,23 @@
+import socks
+
+# Config named "config.py" must be in bot folder
+
+# Your telegram id
+OWNER_ID = 442408334
+# Telegram bot token
+TOKEN = "1097814273:AAGgmkBhC8zv_YQy4PuufedFY4Qs_0_aLg4"
+# Api id and hash from https://core.telegram.org/
+API_ID = 0
+API_HASH = ""
+# Proxy for bot (set None to disable)
+PROXY = (socks.SOCKS5, "0.0.0.0", 0000)
+# MongoDB uri (from mongodb cluster settings) (mongodb://<address>:<port>)
+MONGO_URI = ""
+# Enable all events occured while bot was offline
+CATCH_UP = True
+# Global command prefix
+COMMAND_PREFIX = "/"
+# Enable creating db indexes (can be disabled after first run)
+INIT_DB = True
+# Access token length in
+ACCESS_TOKEN_SIZE = 128

@@ -1,0 +1,6 @@
+
+# Config named "config.py" must be in app folder
+
+HOST = "localhost"
+HOST_IPV6 = "::1"
+PORT = 8080

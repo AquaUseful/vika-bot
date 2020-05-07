@@ -4,6 +4,7 @@ from bot import logger
 from bot.api import tokens
 
 
+# Check request's json for field names and types
 def req_fields(fields: dict):
     def decorator(func):
         @functools.wraps(func)
@@ -21,6 +22,8 @@ def req_fields(fields: dict):
     return decorator
 
 
+# Call function only when token is valid
+# MUST be used with req_fields check for token field
 def token_verify(func):
     @functools.wraps(func)
     async def wrapper(*args, **kwargs):

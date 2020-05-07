@@ -4,7 +4,10 @@ from bot import bot, config, BOT_USERNAME, BOT_ID, logger
 from bot.utils import db, utils
 
 
-def smart_command(command, has_args=False, no_pm=False, no_public=False):
+# Create telegram bot command from function
+# MUST BE FIRST
+# CONFLICTS WITH on_user_join, on_user_left, on_self_join, on_chat_action
+def smart_command(command, has_args=False):
     def decorator(func):
         if has_args:
             pattern = f"^(?i)({config.COMMAND_PREFIX})({command})(@{BOT_USERNAME})? (.+)$"
@@ -15,6 +18,7 @@ def smart_command(command, has_args=False, no_pm=False, no_public=False):
     return decorator
 
 
+# Call function only in private messgaes with user
 def only_pm(func):
     @functools.wraps(func)
     async def wrapper(event):
@@ -25,6 +29,7 @@ def only_pm(func):
     return wrapper
 
 
+# Call function only in groups
 def only_group(func):
     @functools.wraps(func)
     async def wrapper(event):
@@ -35,12 +40,14 @@ def only_group(func):
     return wrapper
 
 
+# Call function on any telegram event (DANGEROUS)
 def raw_event():
     def decorator(func):
         bot.add_event_handler(func, telethon.events.Raw())
     return decorator
 
 
+# Call function only if command is a reply to message
 def must_be_reply(err_msg="This message must be a reply!"):
     def decorator(func):
         @functools.wraps(func)
@@ -53,6 +60,7 @@ def must_be_reply(err_msg="This message must be a reply!"):
     return decorator
 
 
+# Call function only if command's sender is admin
 def sender_admin(err_msg="You must be admin to do this!"):
     def decorator(func):
         @functools.wraps(func)
@@ -65,6 +73,7 @@ def sender_admin(err_msg="You must be admin to do this!"):
     return decorator
 
 
+# Call function only if bot has admin privilegies
 def bot_admin(err_msg="I must be admin to do this!"):
     def decorator(func):
         @functools.wraps(func)
@@ -77,6 +86,9 @@ def bot_admin(err_msg="I must be admin to do this!"):
     return decorator
 
 
+# Call function when new user join
+# MUST BE FIRST
+# CONFLICTS WITH smart_command, on_user_left, on_self_join, on_chat_action
 def on_user_join(handle_join=True, handle_add=True):
     def decorator(func):
         @functools.wraps(func)
@@ -89,6 +101,9 @@ def on_user_join(handle_join=True, handle_add=True):
     return decorator
 
 
+# Call function when user left
+# MUST BE FIRST
+# CONFLICTS WITH smart_command, on_user_join, on_self_join, on_chat_action
 def on_user_left(hangle_left=True, hangle_kick=True):
     def decorator(func):
         @functools.wraps(func)
@@ -99,6 +114,9 @@ def on_user_left(hangle_left=True, hangle_kick=True):
     return decorator
 
 
+# Call function when bot joins
+# MUST BE FIRST
+# CONFLICTS WITH smart_command, on_user_join, on_user_left, on_chat_action
 def on_self_join(func):
     @functools.wraps(func)
     async def wrapper(event):
@@ -108,5 +126,8 @@ def on_self_join(func):
     bot.add_event_handler(wrapper, telethon.events.ChatAction())
 
 
+# Call function on any chat action (DANGEROUS)
+# MUST BE FIRST
+# CONFLICTS WITH smart_command, on_user_join, on_user_left, on_self_join
 def on_chat_action(func):
     bot.add_event_handler(func, telethon.events.ChatAction())
