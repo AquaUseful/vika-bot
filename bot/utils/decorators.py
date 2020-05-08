@@ -19,6 +19,7 @@ def smart_command(command, has_args=False):
 
 
 # Call function only in private messgaes with user
+# CONFLICTS WITH only_group
 def only_pm(func):
     @functools.wraps(func)
     async def wrapper(event):
@@ -30,6 +31,7 @@ def only_pm(func):
 
 
 # Call function only in groups
+# CCNFLICTS WITH only_pm
 def only_group(func):
     @functools.wraps(func)
     async def wrapper(event):

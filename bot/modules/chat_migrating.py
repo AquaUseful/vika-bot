@@ -4,7 +4,7 @@ from bot import bot, logger
 from bot.utils import decorators, db
 from telethon.tl.types import MessageActionChatMigrateTo
 
-
+# Change db when chat transforms from group to megagroup
 @decorators.raw_event()
 async def migrate_chat(event):
     if hasattr(event, "message") and isinstance(event.message.action, MessageActionChatMigrateTo):
