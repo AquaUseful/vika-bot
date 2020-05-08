@@ -3,6 +3,18 @@ from bot import bot, logger, BOT_ID
 from bot.utils import utils, decorators
 
 
+# Performs all checks and promotes user is all is ok
+async def promote_check(chat: telethon.types.Chat, user: telethon.types.User, cmd_msg: telethon.types.Message):
+    if await utils.is_user_admin(chat.id, user.id):
+        await bot.send_message(message="This user is already admin!", entity=chat, reply_to=cmd_msg)
+    else:
+        try:
+            await utils.promote_user(chat.id, user.id)
+            await bot.send_message(message=f"{user.first_name} promoted by {cmd_msg.sender.first_name}", entity=chat, reply_to=cmd_msg)
+        except telethon.errors.BotChannelsNaError:
+            await bot.send_message(message="Sorry, I can't promote users!", entity=chat, reply_to=cmd_msg)
+
+
 @decorators.smart_command("promote", has_args=True)
 @decorators.only_group
 @decorators.bot_admin()
@@ -12,14 +24,7 @@ async def promote_user_by_username(event):
     user_identifier = await utils.parse_identifier(firstarg)
     user = await bot.get_entity(user_identifier)
     logger.debug("Trying to promote: %s", user.id)
-    if await utils.is_user_admin(event.chat.id, user.id):
-        await event.reply("This user is already admin!")
-    else:
-        try:
-            await utils.promote_user(event.chat.id, user.id)
-            await bot.send_message(event.chat, f"{user.first_name} promoted by {event.message.sender.first_name}")
-        except telethon.errors.BotChannelsNaError:
-            await event.reply("Sorry, I can't promote users!")
+    await promote_check(event.chat, user, event.message)
 
 
 @decorators.smart_command("promote")
@@ -31,14 +36,23 @@ async def promote_user_by_message(event):
     reply_to_msg = await event.message.get_reply_message()
     reply_sender = reply_to_msg.sender
     logger.debug("Trying to promote %s", reply_sender.id)
-    if await utils.is_user_admin(event.chat.id, reply_sender.id):
-        await event.reply("This user is already admin")
-    else:
+    await promote_check(event.chat, reply_sender, event.message)
+
+
+# Perform all checks and demote user is all is ok
+async def demote_check(chat: telethon.types.Chat, user: telethon.types.User, cmd_msg: telethon.types.Message):
+    if cmd_msg.sender == user:
+        await bot.send_message(message="You can't demote yourself!", entity=chat, reply_to=cmd_msg)
+    elif user.id == BOT_ID:
+        await bot.send_message(message="I can't demote myself!", entity=chat, reply_to=cmd_msg)
+    elif await utils.is_user_admin(chat.id, user.id):
         try:
-            await utils.promote_user(event.chat.id, reply_sender.id)
-            await bot.send_message(event.chat, f"{reply_sender.first_name} promoted by {event.message.sender.first_name}")
+            await utils.demote_user(chat.id, user.id)
+            await bot.send_message(message=f"{user.first_name} demoted by {cmd_msg.sender.first_name}", entity=chat, reply_to=cmd_msg)
         except telethon.errors.BotChannelsNaError:
-            await event.reply("Sorry, I can't promote users!")
+            await bot.send_message(message=f"Sorry, I can't demote users!", entity=chat, reply_to=cmd_msg)
+    else:
+        await bot.send_message(message=f"{user.first_name} is not admin!", entity=chat, reply_to=cmd_msg)
 
 
 @decorators.smart_command("demote", has_args=True)
@@ -50,18 +64,7 @@ async def demote_user_by_username(event):
     user_identifier = await utils.parse_identifier(firstarg)
     user = await bot.get_entity(user_identifier)
     logger.debug("Trying to promote: %s", user.id)
-    if event.sender == user:
-        await event.reply("You can't demote yourself!")
-    elif user.id == BOT_ID:
-        await event.reply("I can't demote myself!")
-    elif await utils.is_user_admin(event.chat.id, user.id):
-        try:
-            await utils.demote_user(event.chat.id, user.id)
-            await event.reply(f"{user.first_name} demoted by {event.message.sender.first_name}")
-        except telethon.errors.BotChannelsNaError:
-            await event.reply(f"Sorry, I can't demote users!")
-    else:
-        await event.reply(f"{user.first_name} is not admin!")
+    await demote_check(event.chat, user, event.message)
 
 
 @decorators.smart_command("demote")
@@ -73,15 +76,4 @@ async def demote_user_by_message(event):
     reply_to_msg = await event.message.get_reply_message()
     reply_sender = reply_to_msg.sender
     logger.debug("Trying to promote %s", reply_sender.id)
-    if event.sender == reply_sender:
-        await event.reply("You can't demote yourself!")
-    elif reply_sender == BOT_ID:
-        await event.reply("I can't demote myself!")
-    elif await utils.is_user_admin(event.chat.id, reply_sender.id):
-        try:
-            await utils.demote_user(event.chat.id, reply_sender.id)
-            await event.reply(f"{reply_sender.first_name} demoted by {event.message.sender.first_name}")
-        except telethon.errors.BotChannelsNaError:
-            await event.reply(f"Sorry, I can't demote users!")
-    else:
-        await event.reply(f"{reply_sender.first_name} is not admin!")
+    await demote_check(event.chat, reply_sender, event.message)
