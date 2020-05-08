@@ -15,6 +15,8 @@ async def help(event):
 
 /delnote <note name> - delete note from database
 
+/notes - list all notes from current chat
+
 /kick [username] - kick user from chat (when used as a reply kicks origin's sender)
 
 /ban [username] - bans user in this chat (when used as a reply bans origin's sender)

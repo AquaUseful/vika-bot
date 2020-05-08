@@ -37,3 +37,13 @@ async def del_note(event):
         await event.reply(f"Note {title} deleted")
     else:
         await event.reply(f"Note {title} not found!")
+
+
+@decorators.smart_command("notes")
+@decorators.only_group
+async def notes(event):
+    notes = await db.get_note_titles(event.chat.id)
+    if notes:
+        await event.reply("Available notes in this chat:\n\n" + "\n".join(notes))
+    else:
+        await event.reply("No notes available in this chat!")

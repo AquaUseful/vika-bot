@@ -72,6 +72,13 @@ async def delete_note(chat_id: int, title: str):
     return res.deleted_count > 0
 
 
+async def get_note_titles(chat_id: int) -> tuple:
+    result = []
+    async for res in mongodb.notes.find({"chat_id": chat_id}):
+        result.append(res["title"])
+    return tuple(result)
+
+
 async def get_chat(tg_id: int, projection=None):
     chat = await mongodb.chats.find_one({"tg_id": tg_id}, projection)
     return chat
