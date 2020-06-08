@@ -8,7 +8,8 @@ blueprint = quart.Blueprint("users", __name__)
 
 
 @blueprint.route("/api/users/info", methods=["POST"])
-@decorators.req_fields({"ids": typing.Iterable})
+@decorators.req_fields({"token": str, "ids": typing.Iterable})
+@decorators.token_verify
 async def get_user():
     req_json = await quart.request.json
     try:
